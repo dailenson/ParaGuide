@@ -30,13 +30,14 @@
   ```
 ## 🚀 Training & Test
 **Training**
-- To train the ParaGuide on the Chinese dataset, run this command:
+- To train the ParaGuide, run this command:
 ```
 python main.py --base_dir "/home/data/ForensicsIAM" --dataset "IAM" "VATr" \
 --batchsize 64 --exp 'saved_path' --size 512 512 --learning_rate 0.005
 ```
 **Note**:
 Please modify ``base_dir`` and ``exp`` according to your own path. Please modify ``dataset`` to the subset of data you want to use.
+
 **Test**
 - To test the ParaGuide on the skilled forgery scenario, run this command:
 ```
