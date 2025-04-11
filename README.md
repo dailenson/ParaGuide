@@ -4,14 +4,14 @@
   ```
   ForensicsIAM/
   │
-  ├── Genuine/ - trainers  
+  ├── Genuine/ - the genuine subset  
   │   └── IAM/
   │       ├── train/
   │       ├── test/
   │       ├── train.txt
   │       └── test.txt
   │
-  └── Forged/ - trainers
+  └── Forged/ - the forged subset
       ├── One-DM/
       │   ├── train/
       │   ├── test/
