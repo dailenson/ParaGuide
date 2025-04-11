@@ -1,5 +1,7 @@
 # ForensicsIAM Benchmark
 
+  We provide ForensicsIAM datasets in [Google Drive](https://drive.google.com/drive/folders/1vivXSekLLr06UA7pBdZFLzqOnUiSwhSV?usp=sharing). Please download these datasets, uzip them and move the extracted files to /ForensicsIAM.
+
 ## 📂 Datasets Folder Structure
   ```
   ForensicsIAM/
@@ -28,9 +30,10 @@
           ├── train.txt
           └── test.txt               
   ```
-  We provide ForensicsIAM datasets in [Google Drive](https://drive.google.com/drive/folders/1vivXSekLLr06UA7pBdZFLzqOnUiSwhSV?usp=sharing). Please download these datasets, uzip them and move the extracted files to /ForensicsIAM.
 
-# ParaGuide
+
+# ParaGuide Algorithm
+
 ## 🚀 Training & Test
 **Training**
 - To train the ParaGuide, run this command:
