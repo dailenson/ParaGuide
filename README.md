@@ -29,7 +29,7 @@
           └── test.txt               
   ```
 ## 🚀 Training & Test
-- **Training**
+**Training**
 - To train the ParaGuide on the Chinese dataset, run this command:
 ```
 python main.py --base_dir "/home/data/ForensicsIAM" --dataset "IAM" "VATr" \
@@ -37,7 +37,7 @@ python main.py --base_dir "/home/data/ForensicsIAM" --dataset "IAM" "VATr" \
 ```
 **Note**:
 Please modify ``base_dir`` and ``exp`` according to your own path. Please modify ``dataset`` to the subset of data you want to use.
-- **Test**
+**Test**
 - To test the ParaGuide on the skilled forgery scenario, run this command:
 ```
 python eva_skill.py --base_dir "/home/data/ForensicsIAM" --dataset "IAM64" "VATr" \
