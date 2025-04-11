@@ -47,7 +47,7 @@ Please modify ``base_dir`` and ``exp`` according to your own path. Please modify
 **Test**
 - To test the ParaGuide on the skilled forgery scenario, run this command:
 ```
-python eva_skill.py --base_dir "/home/data/ForensicsIAM" --dataset "IAM64" "Forged subset" \
+python eva_skill.py --base_dir "/home/data/ForensicsIAM" --dataset "IAM" "Forged subset" \
         --batchsize 128 --model_path "saved_path/DTL_epoch=200.pt" --size 512 512
 ```
 **Note**:
