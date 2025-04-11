@@ -1,4 +1,4 @@
-# ForensicsIAM
+# ForensicsIAM Benchmark
 
 ## 📂 Datasets Folder Structure
   ```
