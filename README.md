@@ -28,6 +28,7 @@
           ├── train.txt
           └── test.txt               
   ```
+  We provide ForensicsIAM datasets in [Google Drive](https://drive.google.com/drive/folders/1vivXSekLLr06UA7pBdZFLzqOnUiSwhSV?usp=sharing). Please download these datasets, uzip them and move the extracted files to /ForensicsIAM.
 ## 🚀 Training & Test
 **Training**
 - To train the ParaGuide, run this command:
