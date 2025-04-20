@@ -38,8 +38,7 @@
 **Training**
 - To train the ParaGuide, run this command:
 ```
-python train.py --base_dir "./data/ForensicsIAM" --dataset "IAM" "Forged subset" \
-        --exp 'exp_path'
+python train.py --base_dir "./data/ForensicsIAM" --dataset "IAM" "Forged subset" --exp 'exp_path'
 ```
 **Note**:
 Please modify ``base_dir`` and ``exp`` according to your own path. Please modify ``Forged subset`` to the subset of data you want to use,``One-DM``,``VATr``or``HWT``.
