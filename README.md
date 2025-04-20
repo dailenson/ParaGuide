@@ -47,7 +47,7 @@ Please modify ``base_dir`` and ``exp`` according to your own path. Please modify
 - To test the ParaGuide on the skilled forgery scenario, run this command:
 ```
 python test_skill.py --base_dir "./data/ForensicsIAM" --dataset "IAM" "Forged subset" \
-        --batchsize 128 --model_path "saved/models/epoch=200.pt"
+        --batchsize 128 --model_path "saved/exp/models/epoch=200.pt"
 ```
 **Note**:
 Please modify ``base_dir`` and ``exp`` according to your own path. Please modify ``Forged subset`` to the subset of data you want to use,``One-DM``,``VATr``or``HWT``.
