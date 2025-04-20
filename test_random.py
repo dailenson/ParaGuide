@@ -22,9 +22,10 @@ torch.manual_seed(1)
 random.seed(1)
 np.random.seed(1)
 
-    
-### Taken from SigNet paper
+
 def compute_accuracy_roc(predictions, labels, step=None):
+    ### Borrowed from DetailSemNet[ECCV 2024]
+    # https://github.com/nycu-acm/DetailSemNet_OSV
     dmax = np.max(predictions)
     dmin = np.min(predictions)
     print(f"Max: {dmax}, Min: {dmin}")
