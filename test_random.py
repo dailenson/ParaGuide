@@ -1,7 +1,6 @@
 import os
 import numpy as np
 import pandas as pd
-from sklearn.manifold import TSNE
 import torch
 from torch.nn.functional import mse_loss
 from torchvision.utils import save_image
@@ -12,8 +11,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 from sklearn.neighbors import KNeighborsClassifier as KNN
 from sklearn.svm import SVC as SVM
-from iam_dataset import *
-from model import *
+from data_loader.loader import *
+from models.model import *
 import warnings
 warnings.filterwarnings('ignore')
 from tqdm import tqdm
@@ -37,12 +36,10 @@ def compute_accuracy_roc(predictions, labels, step=None):
     max_acc, min_frr, min_far = 0.0, 1.0, 1.0
     d_optimal = 0.0
     tpr_arr, far_arr = [], []
-    for d in tqdm(predictions):
     #for d in tqdm(np.arange(dmin, dmax + step, step)):
+    for d in tqdm(predictions):
         idx1 = predictions.ravel() >= d     # pred = 1
         idx2 = predictions.ravel() < d      # pred = 0
-        #idx1 = predictions.ravel() <= d     # pred = 1
-        #idx2 = predictions.ravel() > d      # pred = 0
 
         tpr = float(np.sum(labels[idx1] == 1)) / nsame
         #tnr = float(np.sum(labels[idx2] == 0)) / ndiff
@@ -70,14 +67,11 @@ def compute_accuracy_roc(predictions, labels, step=None):
     metrics = {"best_acc" : max_acc, "best_frr" : min_frr, "best_far" : min_far, "tpr_arr" : tpr_arr, "far_arr" : far_arr}
     return metrics, d_optimal
 
+
 #### compute accuracy per writer
 def compute_accuracy_per_writer(predictions, labels, writers, step=None):
     dmax = np.max(predictions)
     dmin = np.min(predictions)
-    mean_val = np.mean(predictions)
-    std_val = np.std(predictions)
-    predictions = np.array([(x - mean_val) / std_val for x in predictions])
-    print(f"Max: {dmax}, Min: {dmin}")
     if step is None:
         step = 0.00005
 
@@ -86,9 +80,7 @@ def compute_accuracy_per_writer(predictions, labels, writers, step=None):
     d_optimal = 0.0
     unique_writers = np.unique(writers)
 
-    for d in tqdm(np.arange(dmin, dmax + step, step)):
-    #for d in tqdm(np.arange(dmin, 5, step)):
-    #for d in tqdm(predictions):
+    for d in np.arange(dmin, dmax + step, step):
         writer_accs, writer_frrs, writer_fars = [], [], []
         for writer in unique_writers:
             writer_idx = writers == writer
@@ -119,14 +111,13 @@ def compute_accuracy_per_writer(predictions, labels, writers, step=None):
     metrics = {"best_acc": max_acc, "best_frr": optimal_frr, "best_far": optimal_far}
     return metrics, d_optimal
 
-
-
+    
 if __name__ == '__main__':
 
     import argparse
     parser = argparse.ArgumentParser('Dual Triplet -- Evaluation | SSL for Writer Identification')
     parser.add_argument('--base_dir', type=str, default=os.getcwd())
-    parser.add_argument('--dataset', type=str, nargs=2, default='./../BHSig260/Bengali')
+    parser.add_argument('--dataset', type=str, nargs=1, default='./../BHSig260/Bengali')
     parser.add_argument('--saved_models', type=str, default='./saved_models')
     parser.add_argument('--load_model', type=str, default='./../Autoencoder/saved_models/BHSig260_Bengali_SSL_Encoder_RN18_AE.pth')
     parser.add_argument('--batchsize', type=int, default=128)  # change for Testing; default=16
@@ -140,9 +131,9 @@ if __name__ == '__main__':
     parser.add_argument('--model_path', type=str, default='./saved_models/BHSig260_Bengali_200epochs_LR=0.1_LR-AE=0.0001_LBD=1.0_backbone=AE.pt')
     parser.add_argument('--stepsize', type=float, default=5e-5)
     parser.add_argument('--eval_type', type=str, default='self', choices=['self','cross'])
-    parser.add_argument('--proxy_mode', type=str, default='only_real', choices=['only_real', 'real_fake'])
     parser.add_argument('--roc', type=bool, default=False)
     parser.add_argument('--roc_name', type=str, default=None)
+    parser.add_argument('--proxy_mode', type=str, default='only_real', choices=['only_real', 'real_fake'])
     parser.add_argument('--size', type=int, nargs=2, required=True, help='(h , w) of the input image')
     args = parser.parse_args()
 
@@ -156,7 +147,7 @@ if __name__ == '__main__':
     # THRESHOLD = 0.001934
 
     checkpoint = torch.load(MODEL_PATH)
-    model = Triplet_Model(args)
+    model = ParaGuide(args)
     model.load_state_dict(checkpoint)
     print(f"Loading model from: {MODEL_PATH}")
     model.to(device)
@@ -168,9 +159,7 @@ if __name__ == '__main__':
     count = 0
     with torch.no_grad():
         for batch in tqdm(test_loader, leave=False):
-            #feat = model.projector(model.encoder(batch['image'].to(device), pool=True))
             feat = model.pro_fea(model.encoder(batch['image'].to(device), pool=True))
-            #feat = model.encoder(batch['image'].to(device), pool=True)
             features[count:(count+len(feat)), :] = feat.cpu().numpy()
             labels.append(batch['label'].cpu().numpy().flatten())    
             writer_ids.append(batch['writer_id'].cpu().numpy().flatten())
@@ -191,10 +180,10 @@ if __name__ == '__main__':
     df['img_name'] = img_names.copy()
 
     #writer_set = {int(writer) for writer in test_set.writer_set}
-
+    writer_set = {writer for writer in test_set.writer_dict.values()}
     df_ref_writer_list = []
 
-    for writer in test_set.writer_dict.values():
+    for writer in writer_set:
         df_ref = df[(df['writer_id']==writer) & (df['label']==1)]
         df_ref = df_ref.sample(8, random_state=0, replace=False)  
         assert (len(df_ref) == 8)
@@ -205,6 +194,7 @@ if __name__ == '__main__':
 
     dist, y_true, writer_id = [], [], []
 
+    ### test on positive pairs
     preds = pd.DataFrame(columns=['img_name', 'writer_id', 'y_true', 'y_pred'])
     for i in tqdm(range(len(df)), leave=False):
         feature = np.array(df.iloc[i][0:256]).flatten() # D = 512 or 128 -- change accordingly
@@ -212,8 +202,9 @@ if __name__ == '__main__':
         writer = df.iloc[i]['writer_id']
         img_name = df.iloc[i]['img_name']
 
+        ## img is not a part of reference set
         if img_name not in set(list(df_ref_writer['img_name'])):
-            ## img is not a part of reference set
+            ### positive pairs
             df_ref = df_ref_writer[(df_ref_writer['writer_id']==writer)]
             assert (len(df_ref) == 8)
             df_ref = df_ref.drop(['label', 'writer_id', 'img_name'], axis=1)
@@ -225,6 +216,18 @@ if __name__ == '__main__':
             dist.append(mse_diff)
             y_true.append(label)
             writer_id.append(writer)
+            
+            ### negative pairs
+            ref_writer = np.random.choice([w for w in writer_set if w != writer])
+            df_ref = df_ref_writer[(df_ref_writer['writer_id']==ref_writer)]
+            assert (len(df_ref) == 8)
+            df_ref = df_ref.drop(['label', 'writer_id', 'img_name'], axis=1)
+            mean_ref = np.mean(np.array(df_ref, dtype=np.float32), axis=0)
+            mse_diff = np.dot(feature, mean_ref) / (np.linalg.norm(feature) * np.linalg.norm(mean_ref))
+            #mse_diff = np.abs(np.mean(np.subtract(feature, mean_ref)))
+            dist.append(mse_diff)
+            y_true.append(int(not label))
+            writer_id.append(writer)
 
     print(f">> Total numbers of tested samples: {len(dist)}")
     metrics, thresh_optimal = compute_accuracy_roc(np.array(dist), np.array(y_true), step=args.stepsize)
@@ -232,6 +235,6 @@ if __name__ == '__main__':
     print("Metrics obtained: \n" + '-'*50)
     epoch = args.model_path.split('.')[-2][-5:]
     print(f"current epoch is {epoch}")
-    print(f"Acc: {metrics['best_acc'] * 100 :.3f} %")
-    print(f"FAR: {metrics['best_far'] * 100 :.3f} %")
-    print(f"FRR: {metrics['best_frr'] * 100 :.3f} %")
+    print(f"Acc: {metrics['best_acc'] * 100 :.4f} %")
+    print(f"FAR: {metrics['best_far'] * 100 :.4f} %")
+    print(f"FRR: {metrics['best_frr'] * 100 :.4f} %")
