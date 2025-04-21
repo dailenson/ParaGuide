@@ -2,7 +2,7 @@
 
   We provide the ForensicsIAM dataset in [Google Drive](https://drive.google.com/drive/folders/1vivXSekLLr06UA7pBdZFLzqOnUiSwhSV?usp=sharing) | [Baidu Netdisk](https://pan.baidu.com/s/1mSXgt3Q21CCdUGGjvcV4jA?pwd=ehn2). Please download the dataset, uzip it and move the extracted files to /data.
 
-## 📂 Dataset Folder Structure
+## 📂 Folder Structure
   ```
   ForensicsIAM/
   │
