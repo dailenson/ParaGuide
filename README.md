@@ -50,7 +50,7 @@ python test_skilled.py --base_dir "./data/ForensicsIAM" --dataset "IAM" "Forged 
         --model_path "saved/exp/models/epoch=200.pt"
 ```
 **Note**:
-Please modify ``base_dir`` and ``exp`` according to your own path. Please modify ``Forged subset`` to the subset of data you want to use,``One-DM``,``VATr``or``HWT``.
+Please modify ``base_dir`` and ``model_path`` according to your own path. Please modify ``Forged subset`` to the subset of data you want to use,``One-DM``,``VATr``or``HWT``.
 - To test the ParaGuide on the random forgery scenario, run this command:
 ```
 python test_random.py --base_dir "/home/data/ForensicsIAM" --dataset "IAM" \
