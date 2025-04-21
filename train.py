@@ -52,8 +52,6 @@ if __name__ =='__main__':
         model.load_state_dict(checkpoint, strict=True)
         print(f">> Resume training from pre-trained model")
 
-    logs = {'epoch':[], 'step':[], 'epoch_loss':[]}
-
     # start training iterations 
     epoch = 0
     tb_summary = SummaryWriter(log_dir=save_logs)

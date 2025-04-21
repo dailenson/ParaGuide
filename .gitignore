@@ -1,4 +1,4 @@
 saved
 __pycache__
 .vscode
-.sh
+*.sh

@@ -15,7 +15,7 @@ if __name__ == '__main__':
     
     parser = argparse.ArgumentParser('ParaGuide -- Evaluation')
     parser.add_argument('--base_dir', type=str, default='./data/ForensicsIAM')
-    parser.add_argument('--dataset', type=str, nargs=2, default="IAM" "VATr")
+    parser.add_argument('--dataset', type=str, nargs=2, default=["IAM", "VATr"])
     parser.add_argument('--batchsize', type=int, default=128)
     parser.add_argument('--model_path', type=str, default=None)
     parser.add_argument('--size', type=int, nargs=2, default=[512, 512])
