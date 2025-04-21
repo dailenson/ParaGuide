@@ -61,6 +61,7 @@ class Writer_Dataset(Dataset):
                 if self.mode == 'Train':
                     full_dict[idx] = {'image': image, 's_id': s_id, 'label':transcription}
                 elif self.mode == 'Test':
+                    # drop the images with word length less than 2, i.e., a single character
                     if len(transcription) > 1:
                         full_dict[idx] = {'image': image, 's_id': s_id, 'label':transcription}
                     else:
@@ -69,7 +70,7 @@ class Writer_Dataset(Dataset):
                 idx += 1
         
         sorted_writer_list = sorted(self.writer_set)
-        print("total writers", len(sorted_writer_list))
+        print(f"total {self.mode} writers", len(sorted_writer_list))
         writer_dict = {}
         index = 0
         for i in sorted_writer_list:

@@ -21,24 +21,36 @@ class ParaGuide(nn.Module):
         self.pro_aux = nn.Sequential(
             nn.Linear(512, 4096), nn.GELU(), nn.Linear(4096, 256))
         
+        # Parameters for encoders and projection layers
         self.enc_params = self.encoder.parameters()
         self.pro_params = self.pro_fea.parameters()
         self.aux_enc_params = self.auxiliary_encoder.parameters()
         self.pro_aux_params = self.pro_aux.parameters()
 
+        # Placeholders for optimizer, scheduler, and loss functions
+        self.optimizer = None
+        self.scheduler = None
+        self.criterion_aux = None
+        self.criterion_guidance = None
+    
+    def initialize_training_components(self):
+        """Initialize optimizer, scheduler, and loss functions for training."""
         self.criterion_aux = ProtoLearningLoss(contrast_mode='all')
         self.criterion_guidance = ProtoGuidedLoss(contrast_mode='one')
 
         self.optimizer = RMSprop([
-            {"params" : self.enc_params,  "lr" : self.args.learning_rate},
-            {"params" : self.pro_params, "lr" : self.args.learning_rate},
-            {"params" : self.aux_enc_params, "lr" : self.args.learning_rate},
-            {"params" : self.pro_aux_params, "lr" : self.args.learning_rate}
+            {"params": self.enc_params, "lr": self.args.learning_rate},
+            {"params": self.pro_params, "lr": self.args.learning_rate},
+            {"params": self.aux_enc_params, "lr": self.args.learning_rate},
+            {"params": self.pro_aux_params, "lr": self.args.learning_rate}
         ], self.args.learning_rate, weight_decay=0.0005)
-        self.scheduler = LinearWarmupCosineAnnealingLR(self.optimizer, self.args.warmup_epochs, self.args.max_epochs)
-     
-    
+
+        self.scheduler = LinearWarmupCosineAnnealingLR(
+            self.optimizer, self.args.warmup_epochs, self.args.max_epochs
+        )
+
     def train_iter(self, batch):
+        """Perform a single training iteration."""
         # Handwriting Prototype Learning
         pro_emb = self.pro_aux(self.auxiliary_encoder(batch['prototype_img'].to(device), pool=True))
         pro_pos = self.pro_aux(self.auxiliary_encoder(batch['contrast_img'].to(device), pool=True))

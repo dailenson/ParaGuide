@@ -7,10 +7,11 @@ from models.model import *
 from utils.logger import set_log
 from utils.util import fix_seed
 from tensorboardX import SummaryWriter
+import argparse
 
 if __name__ =='__main__':
 
-    import argparse
+    
     parser = argparse.ArgumentParser('ParaGuide')
     parser.add_argument('--base_dir', type=str, default='./data/ForensicsIAM')
     parser.add_argument('--dataset', type=str, nargs=2, default=["IAM", "VATr"])
@@ -25,22 +26,23 @@ if __name__ =='__main__':
 
     args = parser.parse_args()
 
-    #fix the random seed for reproducibility
+    # fix the random seed for reproducibility
     random_seed = 1
     fix_seed(random_seed)
     
-    #prepare log file
+    # prepare log file
     save_logs, save_models = set_log(args)
     print("\n--------------------------------------------------\n")    
     print(args)
     
-    # set dataset
+    # set training dataloader
     train_loader, _, _, train_dataset = get_dataloader(args)
 
     print('-'* 50)
 
     # build model, criterion and optimizer
     model = ParaGuide(args)
+    model.initialize_training_components()
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = model.to(device)
 
