@@ -20,7 +20,7 @@ def compute_accuracy_roc(predictions, labels, step=5e-4):
     d_optimal = 0.0
     tpr_arr, far_arr = [], []
 
-    for d in tqdm(predictions):
+    for d in tqdm(np.arange(dmin, dmax + step, step)):
         idx1 = predictions.ravel() >= d     # genuine samples, if the distance is greater than the threshold
         idx2 = predictions.ravel() < d      # forged samples, if the distance is less than the threshold
 

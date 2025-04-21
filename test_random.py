@@ -55,7 +55,7 @@ if __name__ == '__main__':
     writer_ids = np.concatenate(writer_ids)
  
 
-    ### choose the reference set
+    ### randomly choose the reference set
     df = pd.DataFrame(features)
     df['label'] = labels.copy()
     df['writer_id'] = writer_ids.copy()
@@ -73,7 +73,7 @@ if __name__ == '__main__':
     df_ref_writer = pd.concat(df_ref_writer_list)
     print(f"Each reference set has 8 samples, {len(test_set.writer_dict)} sets contain {len(df_ref_writer)} samples")
 
-    # construct the test pairs between reference set and test samples
+    # construct the test pairs between reference sets and test samples
     dist, y_true, writer_id = [], [], []   
     preds = pd.DataFrame(columns=['img_name', 'writer_id', 'y_true', 'y_pred'])
     for i in tqdm(range(len(df)), leave=False):
@@ -83,7 +83,7 @@ if __name__ == '__main__':
         img_name = df.iloc[i]['img_name']
 
         if img_name not in set(df_ref_writer['img_name']):
-            ### measure the distances between reference set and genuine samples
+            ### measure the distances between reference sets and genuine samples
             df_ref = df_ref_writer[(df_ref_writer['writer_id']==writer)]
             assert (len(df_ref) == 8)
             df_ref = df_ref.drop(['label', 'writer_id', 'img_name'], axis=1)

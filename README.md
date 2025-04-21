@@ -54,7 +54,7 @@ Please modify ``base_dir`` and ``exp`` according to your own path. Please modify
 - To test the ParaGuide on the random forgery scenario, run this command:
 ```
 python test_random.py --base_dir "/home/data/ForensicsIAM" --dataset "IAM" \
-        --batchsize 128 --model_path "saved_path/epoch=200.pt" --size 512 512
+        --model_path "saved_path/epoch=200.pt"
 ```
 **Note**:
 Please modify ``base_dir`` and ``model_path`` according to your own path. 
