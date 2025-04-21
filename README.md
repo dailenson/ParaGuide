@@ -46,7 +46,7 @@ Please modify ``base_dir`` and ``exp`` according to your own path. Please modify
 **Test**
 - To test the ParaGuide on the skilled forgery scenario, run this command:
 ```
-python test_skill.py --base_dir "./data/ForensicsIAM" --dataset "IAM" "Forged subset" \
+python test_skilled.py --base_dir "./data/ForensicsIAM" --dataset "IAM" "Forged subset" \
         --model_path "saved/exp/models/epoch=200.pt"
 ```
 **Note**:
